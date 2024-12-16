@@ -45,6 +45,16 @@ tb-verilog: tb-fir
 	$(call fir2rtl,$(TB_FIR_DIR),$(TB_FIR_FILES),$(TB_MLIR_DIR),$(TB_RTL_DIR))
 	find $(TB_RTL_DIR) -maxdepth 1 -name "*.sv" -type f -print > $(TB_RTL_LIST)
 
+.PHONY: fpv-fir
+fpv-fir:
+	mkdir -p $(TB_FIR_DIR)
+	mill -i elaborateTB.runMain $(DESIGN)FormalMain design --target-dir $(TB_FIR_DIR) --parameter ./config/$(DESIGN)Formal.json
+
+.PHONY: fpv-verilog
+fpv-verilog: fpv-fir
+	$(call fir2rtl,$(TB_FIR_DIR),$(TB_FIR_FILES),$(TB_MLIR_DIR),$(TB_RTL_DIR))
+	find $(TB_RTL_DIR) -name "*.sv" -type f -print > $(TB_RTL_LIST)
+
 define fir2rtl
 	mkdir -p $(3)
 	for file in $(2); do \

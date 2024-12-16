@@ -21,6 +21,8 @@ include $(SCRIPTS_DIR)/design/elaborate.mk
 
 include $(SCRIPTS_DIR)/sim/sim.mk
 
+include $(SCRIPTS_DIR)/formal/formal.mk
+
 #common targets
 .PHONY: vcd
 vcd: 

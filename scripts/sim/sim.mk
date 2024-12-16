@@ -26,8 +26,8 @@ BACKENDSCP.python = $(SIM_DIR)/$(TBLANG)/$(SIM).mk
 BACKENDSCP.verilator_uvm = $(SIM_DIR)/$(TBLANG)/$(SIM).mk
 BACKENDSCP.default = $(SIM_DIR)/backend/$(SIM).mk
 
-ifneq ($(BACKENDSCP.$(SIM)),)
-  BACKENDSCP_PATH = $(BACKENDSCP.$(SIM))
+ifneq ($(BACKENDSCP.$(TBLANG)),)
+  BACKENDSCP_PATH = $(BACKENDSCP.$(TBLANG))
 else ifneq ($(BACKENDSCP.$(SIM)_$(TBLANG)),)
   BACKENDSCP_PATH = $(BACKENDSCP.$(SIM)_$(TBLANG))
 else

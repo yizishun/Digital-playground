@@ -1,0 +1,28 @@
+[tasks]
+basic bmc
+basic default
+
+[options]
+bmc:
+mode bmc
+depth 3
+
+[engines]
+smtbmc
+
+[script]
+read -formal /Users/yizishun/chisel-playground/tb/tb-GCD/chisel-tb/build/GCD.sv
+read -formal /Users/yizishun/chisel-playground/tb/tb-GCD/chisel-tb/build/GCDFormal.sv
+prep -top GCDFormal
+
+[files]
+/Users/yizishun/chisel-playground/tb/tb-GCD/chisel-tb/build/GCD.sv
+/Users/yizishun/chisel-playground/tb/tb-GCD/chisel-tb/build/Verification/Assume/layers-GCDFormal-Verification-Assume.sv
+/Users/yizishun/chisel-playground/tb/tb-GCD/chisel-tb/build/Verification/Assume/GCDFormal_Verification_Assume.sv
+/Users/yizishun/chisel-playground/tb/tb-GCD/chisel-tb/build/Verification/Assert/GCDFormal_Verification_Assert.sv
+/Users/yizishun/chisel-playground/tb/tb-GCD/chisel-tb/build/Verification/Assert/layers-GCDFormal-Verification-Assert.sv
+/Users/yizishun/chisel-playground/tb/tb-GCD/chisel-tb/build/Verification/layers-GCDFormal-Verification.sv
+/Users/yizishun/chisel-playground/tb/tb-GCD/chisel-tb/build/Verification/Cover/GCDFormal_Verification_Cover.sv
+/Users/yizishun/chisel-playground/tb/tb-GCD/chisel-tb/build/Verification/Cover/layers-GCDFormal-Verification-Cover.sv
+/Users/yizishun/chisel-playground/tb/tb-GCD/chisel-tb/build/GCDFormal.sv
+

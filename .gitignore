@@ -20,13 +20,21 @@
 !build.mill
 !README.md
 !tb/
-!tb-GCD/
-!tb/tb-GCD/chisel-tb/clib/json/
 !constr/
 !config/
 !tb-GCD/uvm-tb/uvm-verilator
 !poetry.lock
 !pyproject.toml
+#tb
+tb/tb-GCD/*
+!tb/tb-GCD/python-tb/
+!tb/tb-GCD/chisel-tb/
+!tb/tb-GCD/uvm-tb/
+!tb/tb-GCD/cpp-tb/
+!tb/tb-GCD/sv-tb/
+!tb/tb-GCD/gcd.sby
+!*.sby
+
 # build dir
 build/
 verilator_obj_dir
