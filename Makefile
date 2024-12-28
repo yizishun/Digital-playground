@@ -5,6 +5,8 @@ SCRIPTS_DIR = $(abspath ./scripts)
 TB_DIR = $(abspath ./tb/tb-$(DESIGN)/$(TBLANG)-tb)
 DEP_DIR = $(abspath ./dependencies)
 CONFIG_DIR = $(abspath ./config)
+CONFIG_FILE = $(shell find $(CONFIG_DIR) -name "$(DESIGN).json")
+SYN_DIR = $(abspath ./backend)
 
 #common files
 VCD_FILE = $(BUILD_DIR)/wave.vcd
@@ -20,6 +22,10 @@ SIM := verilator
 include $(SCRIPTS_DIR)/design/elaborate.mk
 
 include $(SCRIPTS_DIR)/sim/sim.mk
+
+include $(SCRIPTS_DIR)/backend/asic/yosys-sta.mk
+
+include $(SCRIPTS_DIR)/backend/fpga/fpga.mk
 
 include $(SCRIPTS_DIR)/formal/formal.mk
 

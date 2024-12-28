@@ -7,3 +7,6 @@
 [submodule "dependencies/json"]
 	path = dependencies/json
 	url = https://github.com/nlohmann/json.git
+[submodule "backend/asic/yosys-sta"]
+	path = backend/asic/yosys-sta
+	url = https://github.com/OSCPU/yosys-sta.git

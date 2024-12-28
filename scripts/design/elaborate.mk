@@ -1,5 +1,5 @@
 #rtl
-RTL_DIR = $(BUILD_DIR)/rtl
+RTL_DIR = $(BUILD_DIR)/rtl/$(DESIGN)
 RTL_LIST = $(RTL_DIR)/filelist.f
 ELABORATE_DIR = $(RTL_DIR)/elaborate
 FIR_DIR = $(ELABORATE_DIR)/fir
@@ -12,6 +12,8 @@ TB_ELABORATE_DIR = $(TB_RTL_DIR)/elaborate
 TB_FIR_DIR = $(TB_ELABORATE_DIR)/fir
 TB_MLIR_DIR = $(TB_ELABORATE_DIR)/mlir
 TB_FIR_FILES = $(shell find $(abspath $(TB_FIR_DIR)) -name "*.fir")
+TB_CONFIG_FILE = $(shell find $(CONFIG_DIR) -name "$(DESIGN)TestBench.json")
+FM_CONFIG_FILE = $(shell find $(CONFIG_DIR) -name "$(DESIGN)Formal.json")
 #firtool options
 FIRTOOL_OPTION = \
 	-O=debug \
@@ -28,7 +30,7 @@ config:
 .PHONY: fir
 fir:
 	mkdir -p $(FIR_DIR)
-	mill -i elaborateRTL.runMain elaborate.Elaborate_$(DESIGN) design --target-dir $(FIR_DIR) --parameter ./config/$(DESIGN).json
+	mill -i elaborateRTL.runMain elaborate.Elaborate_$(DESIGN) design --target-dir $(FIR_DIR) --parameter $(CONFIG_FILE)
 
 .PHONY: verilog
 verilog: fir
@@ -38,7 +40,7 @@ verilog: fir
 .PHONY: tb-fir
 tb-fir:
 	mkdir -p $(TB_FIR_DIR)
-	mill -i elaborateTB.runMain $(DESIGN)TestBenchMain design --target-dir $(TB_FIR_DIR) --parameter ./config/$(DESIGN)TestBench.json
+	mill -i elaborateTB.runMain $(DESIGN)TestBenchMain design --target-dir $(TB_FIR_DIR) --parameter $(TB_CONFIG_FILE)
 
 .PHONY: tb-verilog
 tb-verilog: tb-fir
@@ -48,12 +50,27 @@ tb-verilog: tb-fir
 .PHONY: fpv-fir
 fpv-fir:
 	mkdir -p $(TB_FIR_DIR)
-	mill -i elaborateTB.runMain $(DESIGN)FormalMain design --target-dir $(TB_FIR_DIR) --parameter ./config/$(DESIGN)Formal.json
+	mill -i elaborateTB.runMain $(DESIGN)FormalMain design --target-dir $(TB_FIR_DIR) --parameter $(FM_CONFIG_FILE)
 
 .PHONY: fpv-verilog
 fpv-verilog: fpv-fir
 	$(call fir2rtl,$(TB_FIR_DIR),$(TB_FIR_FILES),$(TB_MLIR_DIR),$(TB_RTL_DIR))
 	find $(TB_RTL_DIR) -name "*.sv" -type f -print > $(TB_RTL_LIST)
+
+.PHONY: addModule
+addModule:
+	@if [ "$(DESIGN)" = "GCD" ]; then \
+		echo "Cannot use GCD as DESIGN name, it is the template"; \
+		exit 1; \
+	fi
+	@echo "Creating new module $(DESIGN) from GCD template..."
+	@mkdir -p rtl/src elaborate/elaborateRTL/src config
+	@cp rtl/src/GCD.scala rtl/src/$(DESIGN).scala
+	@cp elaborate/elaborateRTL/src/GCD.scala elaborate/elaborateRTL/src/$(DESIGN).scala
+	@cp config/GCD.json config/$(DESIGN).json
+	@sed -i '' 's/GCD/$(DESIGN)/g' rtl/src/$(DESIGN).scala
+	@sed -i '' 's/GCD/$(DESIGN)/g' elaborate/elaborateRTL/src/$(DESIGN).scala
+	@echo "Module $(DESIGN) created successfully"
 
 define fir2rtl
 	mkdir -p $(3)

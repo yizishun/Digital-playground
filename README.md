@@ -24,6 +24,13 @@ make sim DESIGN=GCD TBLANG=cocotb SIM=verilator
 make tb-verilog DEIGN=GCD
 make sim DESIGN=GCD TBLANG=chisel SIM=verilator #(bugs)
 make sim DESIGN=GCD TBLANG=chisel SIM=vcs
+# FPGA
+cd backend/fpga
+make project BOARD=... #generate xpr file
+# Asic
+make sta
+# Add module from gcd template
+make addModule DEIGN=...
 ```
 
 # Design
