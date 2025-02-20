@@ -80,7 +80,7 @@ object elaborateRTL extends MyModule {
 }
 
 object tb extends MyModule {
-  override def millSourcePath: Path = os.pwd / "tb" / "tb-gcd" /"chisel-tb"
+  override def millSourcePath: Path = os.pwd / "tb" /"chisel-tb"
   def moduleDeps = Seq(rtl)
 }
 
