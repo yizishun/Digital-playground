@@ -34,6 +34,7 @@ else
   BACKENDSCP_PATH = $(BACKENDSCP.default)
 endif
 
+$(info DESIGN=$(DESIGN))
 $(info SIM=$(SIM))
 $(info TBLANG=$(TBLANG))
 $(info BACKENDSCP_PATH=$(BACKENDSCP_PATH))
