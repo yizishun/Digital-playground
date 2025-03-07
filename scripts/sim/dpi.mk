@@ -1,5 +1,5 @@
 # cpp -> a -------------------------
-CSRCS = $(shell find $(TB_DIR)/dpi -maxdepth 1 -name "*.cpp")
+CSRCS = $(shell find $(TB_DIR)/dpi -name "*.cpp")
 OBJS = $(CSRCS:.cpp=.o)  # 将所有 .cpp 文件替换为对应的 .o 文件
 LIBC_A = $(TB_DIR)/dpi/dpi-lib.a
 CXXFLAGS = -std=c++11 -fPIC -O2 \

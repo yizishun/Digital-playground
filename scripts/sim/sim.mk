@@ -64,3 +64,9 @@ LAYERS.icarus := Verification
 define collect_layer
 $(shell find $(abspath $(1)) -maxdepth 1 -name "*.sv")
 endef
+
+.PHONY: clean-sim
+clean-sim:
+	rm -rf $(VERILATOR_DIR)
+	rm -rf $(VCS_DIR)
+	rm -rf $(IVERILOG_DIR)
