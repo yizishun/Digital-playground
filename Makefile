@@ -32,7 +32,7 @@ include $(SCRIPTS_DIR)/formal/formal.mk
 #common targets
 .PHONY: vcd
 vcd: 
-	$(WAVE_VIEWER) $(VCD_FILE) &
+	$(WAVE_VIEWER) $(VCD_FILE) $(BUILD_DIR)/save.gtkw &
 
 .PHONY: fst
 fst:
