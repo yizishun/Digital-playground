@@ -14,6 +14,7 @@
 !*.py
 !*.json
 !*.xdc
+!*.mill
 !.gitignore
 !.scalafmt.conf
 !build.sc

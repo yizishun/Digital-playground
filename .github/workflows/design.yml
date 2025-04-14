@@ -9,21 +9,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - name: Install basic dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y make git
-      - name: Init git submodules
-        run: git submodule update --init --recursive
       - name: Install mill
-        uses: jodersky/setup-mill@master
-        with:
-          mill-version: 0.11.12
+        run: |
+          curl -L https://repo1.maven.org/maven2/com/lihaoyi/mill-dist/0.12.10/mill -o mill
+          chmod +x mill
+          sudo mv mill /usr/local/bin/
+          mill --version
       - name: Install circt
         uses: circt/install-circt@v1.1.1
         with:
           version: 'firtool-1.87.0'
+      - name: publish chisel
+        run: |
+          cd dependencies/chisel
+          mill unipublish.publishLocal
       - name: Run some flow
         run: |
-          make verilog DESIGN=GCD
+          make verilog

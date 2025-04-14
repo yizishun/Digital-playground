@@ -1,0 +1,82 @@
+import mill._
+import mill.scalalib._
+import mill.define.{Command, TaskModule}
+import mill.scalalib.publish._
+import mill.scalalib.scalafmt._
+import mill.scalalib.TestModule.Utest
+import mill.util.Jvm
+import coursier.maven.MavenRepository
+
+trait HasChisel extends ScalaModule {
+  // Define these for building chisel from source
+  def chiselModule: Option[ScalaModule]
+
+  override def moduleDeps = super.moduleDeps ++ chiselModule
+
+  def chiselPluginJar: T[Option[PathRef]]
+
+  override def scalacOptions = T(
+    super.scalacOptions() ++ chiselPluginJar().map(path => s"-Xplugin:${path.path}") ++ Seq(
+      "-Ymacro-annotations",
+      "-deprecation",
+      "-feature",
+      "-language:reflectiveCalls",
+      "-language:existentials",
+      "-language:implicitConversions"
+    )
+  )
+
+  override def scalacPluginClasspath: T[Agg[PathRef]] = T(super.scalacPluginClasspath() ++ chiselPluginJar())
+
+  // Define these for building chisel from ivy
+  def chiselIvy: Option[Dep]
+
+  override def ivyDeps = T(super.ivyDeps() ++ chiselIvy)
+
+  def chiselPluginIvy: Option[Dep]
+
+  override def scalacPluginIvyDeps: T[Agg[Dep]] = Task(
+    super.scalacPluginIvyDeps() ++ chiselPluginIvy.map(Agg(_)).getOrElse(Agg.empty[Dep])
+  )
+}
+
+object deps {
+  val scalaVer     = "2.13.16"
+  val mainargs     = ivy"com.lihaoyi::mainargs:0.5.0"
+  val oslib        = ivy"com.lihaoyi::os-lib:0.9.1"
+  val upickle      = ivy"com.lihaoyi::upickle:3.3.1"
+  val chisel       = ivy"org.chipsalliance::chisel::0.0.0+1-c2936a4b-SNAPSHOT"
+  val chiselPlugin = ivy"org.chipsalliance:chisel-plugin_${scalaVer}:0.0.0+1-c2936a4b-SNAPSHOT"
+  //val chisel       = ivy"org.chipsalliance::chisel::7.0.0-M2+517-c2936a4b-SNAPSHOT"
+  //val chiselPlugin = ivy"org.chipsalliance:chisel-plugin_${scalaVer}:7.0.0-M2+517-c2936a4b-SNAPSHOT"
+}
+
+trait MyModule extends ScalaModule with HasChisel with ScalafmtModule{
+  def scalaVersion = Task(deps.scalaVer)
+
+  override def ivyDeps = Task(super.ivyDeps() ++ Seq(deps.mainargs, deps.oslib, deps.upickle))
+
+  def chiselModule    = None
+  def chiselPluginJar = Task(None)
+  def chiselPluginIvy = Some(deps.chiselPlugin)
+  def chiselIvy       = Some(deps.chisel)
+}
+
+object rtl extends MyModule {
+}
+
+object elaborateRTL extends MyModule {
+  def millSourcePath = super.millSourcePath / ".." / "elaborate" / "elaborateRTL"
+  override def moduleDeps = super.moduleDeps ++ Seq(rtl)
+
+}
+
+object tb extends MyModule {
+  override def millSourcePath = super.millSourcePath / ".." / "tb" / "chisel-tb"
+  override def moduleDeps = super.moduleDeps ++ Seq(rtl)
+}
+
+object elaborateTB extends MyModule {
+  override def millSourcePath = super.millSourcePath / ".." / "elaborate" / "elaborateTB"
+  override def moduleDeps = super.moduleDeps ++ Seq(tb) ++ Seq(rtl) ++ Seq(elaborateRTL)
+}
